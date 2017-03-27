@@ -34,8 +34,8 @@ angular.module('hl.sticky', [])
       return stacks[stackName];
     }
 
-    // should be above all Bootstrap's z-indexes (but just before the modals)
-    var stickyZIndex = 1039;
+    // To Do: make this configurable! wtf
+    var stickyZIndex = 997;
     var stack = [];
 
     var $stack = {};
