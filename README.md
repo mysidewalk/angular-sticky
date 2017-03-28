@@ -2,7 +2,7 @@
 [![devDependency Status](https://david-dm.org/harm-less/angular-sticky/dev-status.svg?branch=master)](https://david-dm.org/harm-less/angular-sticky#info=devDependencies)
 
 # mySidewalk Version 
-This version applies changes from https://github.com/harm-less/angular-sticky/pull/5 and conforms to mySidewalk coding standards.
+This version applies changes from https://github.com/harm-less/angular-sticky/pull/5, removing jQuery selectors and methods, and conforms to mySidewalk coding standards.
 
 # Angular Sticky
 Pure javascript [AngularJS](http://angularjs.org/) directive to make elements stick when scrolling
