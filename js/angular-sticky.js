@@ -146,9 +146,10 @@ angular.module('hl.sticky', [])
   return stickyStack;
 }])
 
-.factory('hlStickyElement', ['$document', '$log', 'hlStickyStack', 'throttle', 'mediaQuery', function($document, $log, hlStickyStack, throttle, mediaQuery) {
+.factory('hlStickyElement', ['$document', '$window', '$log', 'hlStickyStack', 'throttle', 'mediaQuery', function($document, $window, $log, hlStickyStack, throttle, mediaQuery) {
   return function(element, options) {
     options = options || {};
+    var windowEl = angular.element($window);
 
     var stickyLineTop;
     var stickyLineBottom;
@@ -157,9 +158,10 @@ angular.module('hl.sticky', [])
     var _isSticking = false;
 
     // elements
-    var bodyEl = angular.element($document[0].body);
+    var context = angular.isDefined(options.context) ? angular.element('#' + options.context) : false;
+    var bodyEl = context ? context[0] : angular.element($document[0].body);
     var nativeEl = element[0];
-    var documentEl = $document[0].documentElement;
+    var documentEl = context ? context[0] : $document[0].documentElement;
 
     // attributes
     var id = options.id || null;
@@ -435,8 +437,17 @@ angular.module('hl.sticky', [])
     $api.computedHeight = computedHeight;
     $api.sticksAtPosition = sticksAtPosition;
 
+    if (context) {
+      context.on('scroll', function() {
+        $api.draw(options);
+      });
+    }
+
     $api.destroy = function() {
       unstickElement();
+      if (context) {
+        context.off('scroll', drawEvent);
+      }
       if (stack) {
         stack.remove(id);
       }
@@ -478,8 +489,10 @@ angular.module('hl.sticky', [])
 
         // bind events
         throttledResize = throttle(resize, $stickyElement.defaults.checkDelay, {leading: false});
-        windowEl.on('resize', throttledResize);
-        windowEl.on('scroll', drawEvent);
+
+        // todo: need to turn this off if context exists
+        // windowEl.on('resize', throttledResize);
+        // windowEl.on('scroll', drawEvent);
 
         unbindViewContentLoaded = $rootScope.$on('$viewContentLoaded', throttledResize);
         unbindIncludeContentLoaded = $rootScope.$on('$includeContentLoaded', throttledResize);
@@ -612,6 +625,7 @@ angular.module('hl.sticky', [])
     replace: true,
     scope: {
       container: '@',
+      context: '@',
       anchor: '@',
       stickyClass: '@',
       mediaQuery: '@',
@@ -634,7 +648,7 @@ angular.module('hl.sticky', [])
           });
         }
       };
-      angular.forEach(['anchor', 'container', 'stickyClass', 'mediaQuery', 'enable'], function(option) {
+      angular.forEach(['anchor', 'container', 'stickyClass', 'mediaQuery', 'enable', 'context'], function(option) {
         if (angular.isDefined($scope[option])) {
           options[option] = $scope[option];
         }
