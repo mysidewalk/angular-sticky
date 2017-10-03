@@ -1,8 +1,8 @@
 /*
  * angular-sticky-plugin
- * https://github.com/harm-less/angular-sticky
+ * https://github.com/mysidewalk/angular-sticky
 
- * Version: 0.4.1 - 2017-06-12
+ * Version: 0.4.1-pr32 - 2017-10-03
  * License: MIT
  */
 'use strict';
@@ -34,8 +34,8 @@ angular.module('hl.sticky', [])
 				return stacks[stackName];
 			}
 
-			// should be above all Bootstrap's z-indexes (but just before the modals)
-			var stickyZIndex = 1039;
+			// changed specifically for mysw, below sticky nav bar, above everything else.
+			var stickyZIndex = 997;
 			var stack = [];
 
 			var $stack = {};
@@ -157,7 +157,7 @@ angular.module('hl.sticky', [])
 			var _isSticking = false;
 
 			// elements
-			var bodyEl = angular.element($document[0].body);
+			var bodyEl = $document[0].body;
 			var nativeEl = element[0];
 			var documentEl = $document[0].documentElement;
 
