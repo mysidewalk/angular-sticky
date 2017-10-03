@@ -27,8 +27,8 @@ angular.module('hl.sticky', [])
 				return stacks[stackName];
 			}
 
-			// should be above all Bootstrap's z-indexes (but just before the modals)
-			var stickyZIndex = 1039;
+			// changed specifically for mysw, below sticky nav bar, above everything else.
+			var stickyZIndex = 997;
 			var stack = [];
 
 			var $stack = {};
