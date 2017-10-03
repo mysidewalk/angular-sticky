@@ -376,7 +376,7 @@ describe('angular-sticky', function() {
 
 		function compileSticky(html, options) {
 			element = compile('<div>' + html + '</div>');
-			stickyElement = element.find('#sticky');
+			stickyElement = angular.element(element[0].querySelector('#sticky'));
 			sticky = hlStickyElement(stickyElement, options);
 		}
 
@@ -425,7 +425,7 @@ describe('angular-sticky', function() {
 				drawAt(49);
 				expect(stickyElement.attr('style')).toEqual(originalStyle);
 				expect(stickyElement.next().length).toBe(0);
-				expect(element.has('#placeHolder').size()).toBe(0);
+				expect(angular.element(element)[0].querySelector('#placeHolder')).toBeNull();
 				expect(stickyElement).not.toBeSticky();
 			});
 
@@ -554,7 +554,7 @@ describe('angular-sticky', function() {
 
 				drawAt(50);
 				var placeHolder = stickyElement.next();
-				expect(placeHolder.height()).toBe(40);
+				expect(placeHolder[0].offsetHeight).toBe(40);
 			});
 
 			it('should make it sticky with custom sticky class', function() {
@@ -641,7 +641,7 @@ describe('angular-sticky', function() {
 			it('should handle multiple sticky elements in a stack', function() {
 				compileSticky(templateMultipleStickyElements);
 
-				var stickyElement2 = element.find('#sticky2');
+				var stickyElement2 = angular.element(element[0].querySelector('#sticky2'));
 				var sticky2 = hlStickyElement(stickyElement2);
 
 				drawAt(39);
@@ -678,10 +678,10 @@ describe('angular-sticky', function() {
 				var options2 = { enable: true };
 				compileSticky(templateMultipleStickyElements, null, [options1, options2]);
 
-				var stickyElement1 = element.find('#sticky1');
+				var stickyElement1 = angular.element(element[0].querySelector('#sticky1'));
 				var sticky1 = hlStickyElement(stickyElement1, options1);
 
-				var stickyElement2 = element.find('#sticky2');
+				var stickyElement2 = angular.element(element[0].querySelector('#sticky2'));
 				var sticky2 = hlStickyElement(stickyElement2, options2);
 
 				drawAt(40);
@@ -700,6 +700,15 @@ describe('angular-sticky', function() {
 				options2.enable = true;
 				drawAt(40, sticky2);
 				expect(stickyElement2).toBeSticky();
+			});
+
+			it('should make it sticky with alwaysSticky option set to true', function() {
+				compileSticky(templateStickyElementOffsetSmallWithoutStyle, {
+					alwaysSticky: true
+				});
+
+				drawAt(49);
+				expect(stickyElement).toBeSticky();
 			});
 			
 		});
@@ -735,7 +744,7 @@ describe('angular-sticky', function() {
 				drawAtBottom(51);
 				expect(stickyElement.attr('style')).toEqual(originalStyle);
 				expect(stickyElement.next().length).toBe(0);
-				expect(element.has('#placeHolder').size()).toBe(0);
+				expect(element[0].querySelector('#placeHolder')).toBeNull();
 				expect(stickyElement).not.toBeSticky();
 			});
 
@@ -973,9 +982,9 @@ describe('angular-sticky', function() {
 
 			it('should stick within container given as an element', function() {
 				element = compile('<div>' + templateStickyElementWithContainer + '</div>');
-				stickyElement = element.find('#sticky');
+				stickyElement = angular.element(element[0].querySelector('#sticky'));
 				sticky = hlStickyElement(stickyElement, {
-					container: element.find('#container')[0]
+					container: element[0].querySelector('#container')
 				});
 
 				// just before the container begins it should not be sticky
@@ -1067,7 +1076,7 @@ describe('angular-sticky', function() {
 
 		it('triggers a resize event so the collection gets rendered', function() {
 			var element = compile('<div>' + templateStickyElementOffsetSmall + '</div>');
-			var stickyElement = element.find('#sticky');
+			var stickyElement = angular.element(element[0].querySelector('#sticky'));
 
 			var collection = hlStickyElementCollection();
 			collection.addElement(stickyElement);
@@ -1084,8 +1093,8 @@ describe('angular-sticky', function() {
 
 		it('triggers a resize event with a collection parent', function() {
 			var element = compile('<div>' + templateMultipleStickyElements + '</div>');
-			var stickyElement = element.find('#sticky');
-			var stickyElement2 = element.find('#sticky2');
+			var stickyElement = angular.element(element[0].querySelector('#sticky'));
+			var stickyElement2 = angular.element(element[0].querySelector('#sticky2'));
 
 			var parentName = 'parent';
 
@@ -1131,7 +1140,7 @@ describe('angular-sticky', function() {
 
 		function compileDirective(element) {
 			var compiledElement = compile('<div>' + element + '</div>', scope);
-			var sticky = compiledElement.find('.hl-sticky');
+			var sticky = angular.element(compiledElement[0].getElementsByClassName('hl-sticky'));
 
 			return {
 				element: compiledElement,
@@ -1140,8 +1149,7 @@ describe('angular-sticky', function() {
 		}
 
 		it('passes the simplest directive usage', function () {
-			var compiled = compileDirective('<div hl-sticky></div>');
-			expect(compiled.sticky.hasClass('hl-sticky')).toBe(true);
+			compileDirective('<div hl-sticky></div>');
 
 			scope.$destroy();
 			expect(objectSize(hlStickyElementCollectionProvider.collections)).toBe(0);
@@ -1166,7 +1174,7 @@ describe('angular-sticky', function() {
 				function tryStickyClass(value, findQuery) {
 					var compiled = angular.isDefined(value) ? optionCompile('sticky-class', value) : defaultOptionCompile();
 					findQuery = angular.isDefined(findQuery) ? findQuery : value;
-					var stickyClass = value ? compiled.element.find('.' + findQuery) : {};
+					var stickyClass = value ? compiled.element[0].getElementsByClassName(findQuery) : {};
 					return angular.extend(compiled, {
 						stickyClass: stickyClass
 					});
@@ -1527,12 +1535,6 @@ describe('angular-sticky', function() {
 				var hlStickyElementCollection;
 				var firstStickyElement;
 
-				beforeEach(inject(function(_hlStickyElementCollection_) {
-					hlStickyElementCollection = _hlStickyElementCollection_;
-
-					firstStickyElement = _collection('first');
-				}));
-
 				function _collection(collectionName, collectionParent) {
 					collectionParent = collectionParent || '';
 					var compiled = compileDirective('<div style="height: 50px;"></div><div hl-sticky collection="' + collectionName + '" collection-parent="' + collectionParent + '" style="height: 20px;"></div>');
@@ -1546,6 +1548,12 @@ describe('angular-sticky', function() {
 					return _collection('second', value);
 				}
 
+				beforeEach(inject(function(_hlStickyElementCollection_) {
+					hlStickyElementCollection = _hlStickyElementCollection_;
+
+					firstStickyElement = _collection('first');
+				}));
+
 				it('defaults to no parent', function () {
 					var attempt = tryCollectionParent();
 					var stickyElement = attempt.sticky;
@@ -1553,7 +1561,7 @@ describe('angular-sticky', function() {
 					expect(attempt.collection.trackedElements().length).toBe(1);
 
 					// just before it becomes sticky
-					scrollTo(119);
+					scrollTo(99);
 					scope.$digest();
 
 					expect(stickyElement).not.toBeSticky();
@@ -1571,7 +1579,7 @@ describe('angular-sticky', function() {
 					expect(attempt.collection.trackedElements().length).toBe(1);
 
 					// just before it becomes sticky
-					scrollTo(99);
+					scrollTo(79);
 					scope.$digest();
 
 					expect(stickyElement).not.toBeSticky();
@@ -1590,7 +1598,7 @@ describe('angular-sticky', function() {
 					expect(attempt.collection.trackedElements().length).toBe(1);
 
 					// just before it becomes sticky
-					scrollTo(99);
+					scrollTo(79);
 					scope.$digest();
 
 					expect(stickyElement).not.toBeSticky();
@@ -1636,6 +1644,30 @@ describe('angular-sticky', function() {
 					compiled.sticky.isolateScope().$digest();
 
 					expect(compiled.sticky).toBeSticky();
+				});
+			});
+
+			describe('alwaysSticky', function () {
+
+				it('should overwrite stickyness behavior', function () {
+					var compiled = optionCompile('alwaysSticky', true);
+
+					expect(compiled.sticky).toBeSticky();
+				});
+
+				it('should overwrite sticky behavior regardless of element position',  function () {
+					var compiled = compileDirective(createBottomSticky('<div style="height: 50px;"></div><div hl-sticky anchor="bottom" offset-bottom="30"></div>'));
+					var stickyElement = compiled.sticky;
+
+					scrollTo(81 + 50);
+					scope.$digest();
+
+					expect(stickyElement).not.toBeSticky();
+
+					compiled.sticky.isolateScope().alwaysSticky = true;
+					compiled.sticky.isolateScope().$digest();
+
+					expect(stickyElement).toBeSticky();
 				});
 			});
 		});
