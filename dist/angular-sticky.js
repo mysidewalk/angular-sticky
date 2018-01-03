@@ -2,7 +2,7 @@
  * angular-sticky-plugin
  * https://github.com/harm-less/angular-sticky
 
- * Version: 0.4.2 - 2017-11-01
+ * Version: 0.4.2.1 - 2018-01-03
  * License: MIT
  */
 'use strict';
@@ -21,7 +21,7 @@ angular.module('hl.sticky', [])
 		};
 	})
 
-	.factory('hlStickyStack', ["$document", "DefaultStickyStackName", function ($document, DefaultStickyStackName) {
+	.factory('hlStickyStack', ["$document", "DefaultStickyStackName", "DefaultStickyStackZIndex", function ($document, DefaultStickyStackName, DefaultStickyStackZIndex) {
 
 		var documentEl = $document[0].documentElement;
 
@@ -38,8 +38,7 @@ angular.module('hl.sticky', [])
 				return stacks[stackName];
 			}
 
-			// should be above all Bootstrap's z-indexes (but just before the modals)
-			var stickyZIndex = options.zIndex;
+			var stickyZIndex = options.zIndex || DefaultStickyStackZIndex;
 			var stack = [];
 
 			var $stack = {};
@@ -454,8 +453,6 @@ angular.module('hl.sticky', [])
 		};
 	}])
 
-	.constant('DefaultStickyStackName', 'default-stack')
-
 	.provider('hlStickyElementCollection', function() {
 
 		var $$count = 0;
@@ -615,7 +612,7 @@ angular.module('hl.sticky', [])
 		return $stickyElement;
 	})
 
-	.directive('hlSticky', ["$log", "$window", "$document", "DefaultStickyStackZIndex", "hlStickyElementCollection", function($log, $window, $document, DefaultStickyStackZIndex, hlStickyElementCollection) {
+	.directive('hlSticky', ["$log", "$window", "$document", "hlStickyElementCollection", "DefaultStickyStackZIndex", function($log, $window, $document, hlStickyElementCollection, DefaultStickyStackZIndex) {
 		return {
 			restrict: 'A',
 			scope: {
