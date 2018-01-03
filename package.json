@@ -3,7 +3,7 @@
   "name": "angular-sticky-plugin",
   "version": "0.4.2.1",
   "description": "Pure javascript AngularJS directive to make elements stick when scrolling",
-  "homepage": "https://github.com/harm-less/angular-sticky",
+  "homepage": "https://github.com/mysidewalk/angular-sticky",
   "main": "dist/angular-sticky.js",
   "scripts": {
     "test": "grunt test"

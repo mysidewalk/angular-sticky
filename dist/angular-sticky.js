@@ -1,6 +1,6 @@
 /*
  * angular-sticky-plugin
- * https://github.com/harm-less/angular-sticky
+ * https://github.com/mysidewalk/angular-sticky
 
  * Version: 0.4.2.1 - 2018-01-03
  * License: MIT
@@ -10,8 +10,8 @@
 angular.module('hl.sticky', [])
 	.constant('DefaultStickyStackName', 'default-stack')
 
-	// Custom value for mySidewalk
-	.constant('DefaultStickyStackZIndex', 997)
+	// 1039 should be above all Bootstrap's z-indexes (but just before the modals)
+	.constant('DefaultStickyStackZIndex', 1039)
 
 	.factory('mediaQuery', function () {
 		return {
