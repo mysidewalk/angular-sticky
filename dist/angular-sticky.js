@@ -1,13 +1,17 @@
 /*
  * angular-sticky-plugin
- * https://github.com/mysidewalk/angular-sticky
+ * https://github.com/harm-less/angular-sticky
 
- * Version: 0.4.1-pr32 - 2017-10-03
+ * Version: 0.4.2 - 2017-11-01
  * License: MIT
  */
 'use strict';
 
 angular.module('hl.sticky', [])
+	.constant('DefaultStickyStackName', 'default-stack')
+
+	// 1039 should be above all Bootstrap's z-indexes (but just before the modals)
+	.constant('DefaultStickyStackZIndex', 1039)
 
 	.factory('mediaQuery', function () {
 		return {
@@ -34,8 +38,8 @@ angular.module('hl.sticky', [])
 				return stacks[stackName];
 			}
 
-			// changed specifically for mysw, below sticky nav bar, above everything else.
-			var stickyZIndex = 997;
+			// should be above all Bootstrap's z-indexes (but just before the modals)
+			var stickyZIndex = options.zIndex;
 			var stack = [];
 
 			var $stack = {};
@@ -525,6 +529,7 @@ angular.module('hl.sticky', [])
 					options = angular.extend({}, $stickyElement.elementsDefaults, options);
 
 					var collectionName = options.name || DefaultStickyStackName;
+					var zIndex = parseInt(options.zIndex, 10);
 
 					// use existing element collection
 					if ($stickyElement.collections[collectionName]) {
@@ -532,7 +537,8 @@ angular.module('hl.sticky', [])
 					}
 
 					var stickyStackFactory = hlStickyStack({
-						name: collectionName
+						name: collectionName,
+						zIndex: zIndex
 					});
 
 					var trackedElements = [];
@@ -609,7 +615,7 @@ angular.module('hl.sticky', [])
 		return $stickyElement;
 	})
 
-	.directive('hlSticky', ["$log", "$window", "$document", "hlStickyElementCollection", function($log, $window, $document, hlStickyElementCollection) {
+	.directive('hlSticky', ["$log", "$window", "$document", "DefaultStickyStackZIndex", "hlStickyElementCollection", function($log, $window, $document, DefaultStickyStackZIndex, hlStickyElementCollection) {
 		return {
 			restrict: 'A',
 			scope: {
@@ -628,7 +634,8 @@ angular.module('hl.sticky', [])
 
 				var stickyElementCollection = hlStickyElementCollection({
 					name: $scope.collection,
-					parent: $scope.collectionParent
+					parent: $scope.collectionParent,
+					zIndex: $attrs.zIndex || DefaultStickyStackZIndex
 				});
 				var options = {
 					id: $attrs.hlSticky,
