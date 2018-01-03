@@ -10,8 +10,8 @@
 angular.module('hl.sticky', [])
 	.constant('DefaultStickyStackName', 'default-stack')
 
-	// 1039 should be above all Bootstrap's z-indexes (but just before the modals)
-	.constant('DefaultStickyStackZIndex', 1039)
+	// Custom value for mySidewalk
+	.constant('DefaultStickyStackZIndex', 997)
 
 	.factory('mediaQuery', function () {
 		return {
