@@ -4,6 +4,8 @@
 # mySidewalk Version 
 This version applies changes from https://github.com/harm-less/angular-sticky/pull/5, removing jQuery selectors and methods, and conforms to mySidewalk coding standards.
 
+It also applies https://github.com/harm-less/angular-sticky/pull/40, allowing a `z-index` attribute to the directive to specify the previously hard-coded sticky z-index position.
+
 # Angular Sticky
 Pure javascript [AngularJS](http://angularjs.org/) directive to make elements stick when scrolling
 
